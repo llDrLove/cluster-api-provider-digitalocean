@@ -67,3 +67,15 @@ func (s *Service) DeleteVolume(id string) error {
 	s.scope.V(2).Info("Deleted block storage volume", "volume-id", id)
 	return nil
 }
+
+// DetachVolume detach a block storage volume from droplets.
+func (s *Service) DetachVolume(volumeID string, dropletID int) error {
+	s.scope.V(2).Info("Attempting to detach block storage volume", "volume-id", volumeID, "droplet-id", dropletID)
+
+	if _, _, err := s.scope.StorageActions.DetachByDropletID(s.ctx, volumeID, dropletID); err != nil {
+		return fmt.Errorf("failed to detach instance with volume ID %q on droplet ID %d: %w", volumeID, dropletID, err)
+	}
+
+	s.scope.V(2).Info("Detached block storage volume", "volume-id", volumeID, "droplet-id", dropletID)
+	return nil
+}

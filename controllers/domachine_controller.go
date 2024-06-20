@@ -21,6 +21,7 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/pkg/errors"
@@ -325,7 +326,16 @@ func (r *DOMachineReconciler) reconcileDeleteVolumes(ctx context.Context, mscope
 		if vol == nil {
 			continue
 		}
+
 		if err = computesvc.DeleteVolume(vol.ID); err != nil {
+			if strings.Contains(err.Error(), "attached volume cannot be deleted") {
+				for _, dID := range vol.DropletIDs {
+					if detachErr := computesvc.DetachVolume(vol.ID, dID); detachErr != nil {
+						return reconcile.Result{}, errors.Wrap(detachErr, "failed to detach volume")
+					}
+				}
+			}
+
 			return reconcile.Result{}, err
 		}
 		r.Recorder.Eventf(domachine, corev1.EventTypeNormal, "VolumeDeleted", "Deleted the storage volume - %s", vol.Name)

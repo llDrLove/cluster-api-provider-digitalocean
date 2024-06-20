@@ -23,11 +23,12 @@ import (
 
 // DOClients hold all necessary clients to work with the DO API.
 type DOClients struct {
-	Actions       godo.ActionsService
-	Droplets      godo.DropletsService
-	Storage       godo.StorageService
-	Images        godo.ImagesService
-	Keys          godo.KeysService
-	LoadBalancers godo.LoadBalancersService
-	Domains       godo.DomainsService
+	Actions        godo.ActionsService
+	StorageActions godo.StorageActionsService
+	Droplets       godo.DropletsService
+	Storage        godo.StorageService
+	Images         godo.ImagesService
+	Keys           godo.KeysService
+	LoadBalancers  godo.LoadBalancersService
+	Domains        godo.DomainsService
 }
